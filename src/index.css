@@ -134,6 +134,10 @@ body {
   line-height: 1em;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .question--answer:hover {
