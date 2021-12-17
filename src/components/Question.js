@@ -27,8 +27,6 @@ function Question(props) {
     setAnswers(allAnswers);
   };
 
-  console.log(answers);
-
   const handleClick = (id) => {
     setAnswers((prevState) =>
       prevState.map((answer) => {
@@ -44,10 +42,32 @@ function Question(props) {
     );
   };
 
+  const checkResults = () => {
+    // check if isHeld and correct answer
+    // if so, turn answer green
+    // else make it red
+    // count correct answers
+    // update ui
+
+    answers.forEach((answer) => {
+      if (answer.isHeld && answer.answer === props.correctAnswer) {
+        props.setScore(prevState => prevState + 1)
+        console.log('CORRECT')
+      } else if (answer.isHeld && answer.answer !== props.correctAnswer) {
+        console.log('WRONG')
+      }
+    });
+  };
+
+  setTimeout(() => {
+    checkResults();
+  }, 3000);
+
   const answerElements = answers.map((answer) => {
     return (
       <div
         key={answer.id}
+        id={answer.id}
         className={`question--answer ${answer.isHeld ? "active" : ""}`}
         onClick={() => handleClick(answer.id)}
       >
@@ -55,7 +75,7 @@ function Question(props) {
       </div>
     );
   });
-
+  console.log("RENDER QUESTION")
   return (
     <div className="question">
       <div className="question--title">{decode(props.title)}</div>

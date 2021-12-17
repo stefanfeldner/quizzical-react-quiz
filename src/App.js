@@ -1,11 +1,14 @@
 import React from "react";
 import Intro from "./components/Intro";
 import Question from "./components/Question";
+import Result from "./components/Result";
 import { nanoid } from "nanoid";
 
 function App() {
   const [showOverlay, setShowOverlay] = React.useState(true);
   const [questions, setQuestions] = React.useState([]);
+  const [score, setScore] = React.useState(0);
+  const questionAmount = 5;
 
   const toggleOverlay = () => {
     setShowOverlay((prevState) => !prevState);
@@ -15,7 +18,7 @@ function App() {
     const fetchAPI = async () => {
       try {
         const response = await fetch(
-          "https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple"
+          `https://opentdb.com/api.php?amount=${questionAmount}&difficulty=easy&type=multiple`
         );
         const data = await response.json();
         setQuestions(data.results);
@@ -26,6 +29,10 @@ function App() {
     fetchAPI();
   }, []);
 
+  const checkResults = () => {
+    console.log("Checking");
+  };
+
   const questionElements = questions.map((question) => {
     return (
       <Question
@@ -33,6 +40,7 @@ function App() {
         correctAnswer={question.correct_answer}
         incorrectAnswers={question.incorrect_answers}
         key={nanoid()}
+        setScore={setScore}
       />
     );
   });
@@ -41,10 +49,11 @@ function App() {
     <div className="container">
       {showOverlay && <Intro toggleOverlay={toggleOverlay} />}
       {questionElements}
-      <div className="result">
-        <p>You scored 3/5 correct answers</p>
-        <button className="checkAnswer">Check answers</button>
-      </div>
+      <Result
+        checkResults={checkResults}
+        score={score}
+        questionAmount={questionAmount}
+      />
     </div>
   );
 }
