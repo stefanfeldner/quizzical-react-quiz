@@ -8,10 +8,12 @@ function App() {
   const [showOverlay, setShowOverlay] = React.useState(true);
   const [questions, setQuestions] = React.useState([]);
   const [score, setScore] = React.useState(0);
+  const [answers, setAnswers] = React.useState([]);
   const questionAmount = 5;
 
   const toggleOverlay = () => {
     setShowOverlay((prevState) => !prevState);
+    defineAnswers();
   };
 
   React.useEffect(() => {
@@ -27,20 +29,83 @@ function App() {
       }
     };
     fetchAPI();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const checkResults = () => {
-    console.log("Checking");
+  const createAnswer = (answer, id, isHeld) => {
+    return {
+      answer,
+      id,
+      isHeld,
+    };
   };
 
-  const questionElements = questions.map((question) => {
+  const defineAnswers = () => {
+    const allAnswers = [];
+    questions.map((question) => {
+      question.incorrect_answers.forEach((answer) => {
+        allAnswers.push(createAnswer(answer, nanoid(), false));
+      });
+      allAnswers.push(createAnswer(question.correct_answer, nanoid(), false));
+      // console.log(allAnswers);
+      return allAnswers;
+    });
+    setAnswers(sliceArray(allAnswers, 4));
+  };
+
+  console.log(answers);
+  function sliceArray(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      const chunk = arr.slice(i, i + chunkSize);
+      res.push(chunk);
+    }
+    return res;
+  }
+
+  const handleClick = (id) => {
+    setAnswers((prevState) =>
+      prevState.map((answer) => {
+        return answer.map(elem => {
+          if (elem.id === id) {
+            return {
+              ...elem,
+              isHeld: !elem.isHeld,
+            };
+          } else {
+            return elem;
+          }
+        })
+      })
+    );
+  };
+
+  const checkResults = () => {
+    // check if isHeld and correct answer
+    // if so, turn answer green
+    // else make it red
+    // count correct answers
+    // update ui
+    console.log('clicked')
+    // questions.map((question) => {
+    //   answers.forEach((answer) => {
+    //     if (answer.isHeld && answer.answer === question.correctAnswer) {
+    //       setScore((prevState) => prevState + 1);
+    //       console.log("CORRECT");
+    //     } else if (answer.isHeld && answer.answer !== question.correctAnswer) {
+    //       console.log("WRONG");
+    //     }
+    //   });
+    // });
+  };
+
+  const questionElements = answers.map((answer, i) => {
     return (
-      <Question
-        title={question.question}
-        correctAnswer={question.correct_answer}
-        incorrectAnswers={question.incorrect_answers}
-        key={nanoid()}
-        setScore={setScore}
+      <Question 
+        title={questions[i].question} 
+        key={nanoid()} 
+        answer={answer} 
+        handleClick={handleClick}
       />
     );
   });
