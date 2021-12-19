@@ -6,6 +6,7 @@ import { nanoid } from "nanoid";
 
 function App() {
   const [showOverlay, setShowOverlay] = React.useState(true);
+  const [showResult, setShowResult] = React.useState(false);
   const [questions, setQuestions] = React.useState([]);
   const [score, setScore] = React.useState(0);
   const [answers, setAnswers] = React.useState([]);
@@ -29,44 +30,54 @@ function App() {
       }
     };
     fetchAPI();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const createAnswer = (answer, id, isHeld) => {
+  const createAnswer = (answer, id, isHeld, isCorrect) => {
     return {
       answer,
       id,
       isHeld,
+      isCorrect,
     };
   };
 
-  const defineAnswers = () => {
-    const allAnswers = [];
-    questions.map((question) => {
-      question.incorrect_answers.forEach((answer) => {
-        allAnswers.push(createAnswer(answer, nanoid(), false));
-      });
-      allAnswers.push(createAnswer(question.correct_answer, nanoid(), false));
-      // console.log(allAnswers);
-      return allAnswers;
-    });
-    setAnswers(sliceArray(allAnswers, 4));
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
   };
 
-  console.log(answers);
-  function sliceArray(arr, chunkSize) {
+  const sliceArray = (arr, chunkSize) => {
     const res = [];
     for (let i = 0; i < arr.length; i += chunkSize) {
       const chunk = arr.slice(i, i + chunkSize);
       res.push(chunk);
     }
     return res;
-  }
+  };
+
+  const defineAnswers = () => {
+    const allAnswers = [];
+    questions.map((question) => {
+      question.incorrect_answers.forEach((answer) => {
+        allAnswers.push(createAnswer(answer, nanoid(), false, false));
+      });
+      allAnswers.push(
+        createAnswer(question.correct_answer, nanoid(), false, true)
+      );
+      return allAnswers;
+    });
+    console.log(sliceArray(allAnswers, 4));
+    setAnswers(sliceArray(allAnswers, 4));
+  };
 
   const handleClick = (id) => {
     setAnswers((prevState) =>
       prevState.map((answer) => {
-        return answer.map(elem => {
+        return answer.map((elem) => {
           if (elem.id === id) {
             return {
               ...elem,
@@ -75,37 +86,31 @@ function App() {
           } else {
             return elem;
           }
-        })
+        });
       })
     );
   };
 
   const checkResults = () => {
-    // check if isHeld and correct answer
-    // if so, turn answer green
-    // else make it red
-    // count correct answers
-    // update ui
-    console.log('clicked')
-    // questions.map((question) => {
-    //   answers.forEach((answer) => {
-    //     if (answer.isHeld && answer.answer === question.correctAnswer) {
-    //       setScore((prevState) => prevState + 1);
-    //       console.log("CORRECT");
-    //     } else if (answer.isHeld && answer.answer !== question.correctAnswer) {
-    //       console.log("WRONG");
-    //     }
-    //   });
-    // });
+    setShowResult(true);
+    answers.map((answer) => {
+      return answer.forEach((item) => {
+        if (item.isHeld && item.isCorrect) {
+          setScore((prevScore) => prevScore + 1);
+        }
+      });
+    });
   };
 
   const questionElements = answers.map((answer, i) => {
     return (
-      <Question 
-        title={questions[i].question} 
-        key={nanoid()} 
-        answer={answer} 
+      <Question
+        title={questions[i].question}
+        key={nanoid()}
+        answer={answer}
         handleClick={handleClick}
+        score={score}
+        showResult={showResult}
       />
     );
   });
@@ -117,6 +122,7 @@ function App() {
       <Result
         checkResults={checkResults}
         score={score}
+        showResult={showResult}
         questionAmount={questionAmount}
       />
     </div>
