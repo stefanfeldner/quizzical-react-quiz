@@ -10,18 +10,16 @@ function App() {
   const [questions, setQuestions] = React.useState([]);
   const [score, setScore] = React.useState(0);
   const [answers, setAnswers] = React.useState([]);
-  const questionAmount = 5;
-
-  const toggleOverlay = () => {
-    setShowOverlay((prevState) => !prevState);
-    defineAnswers();
-  };
+  const [apiData, setApiData] = React.useState({
+    numOfQuestions: 5,
+    difficulty: "easy",
+  });
 
   React.useEffect(() => {
     const fetchAPI = async () => {
       try {
         const response = await fetch(
-          `https://opentdb.com/api.php?amount=${questionAmount}&difficulty=easy&type=multiple`
+          `https://opentdb.com/api.php?amount=${apiData.numOfQuestions}&difficulty=${apiData.difficulty === 'anyDifficulty' ? '' : apiData.difficulty}&type=multiple`
         );
         const data = await response.json();
         setQuestions(data.results);
@@ -30,15 +28,11 @@ function App() {
       }
     };
     fetchAPI();
-  }, []);
+  }, [apiData]);
 
-  const createAnswer = (answer, id, isHeld, isCorrect) => {
-    return {
-      answer,
-      id,
-      isHeld,
-      isCorrect,
-    };
+  const toggleOverlay = () => {
+    setShowOverlay((prevState) => !prevState);
+    defineAnswers();
   };
 
   const shuffleArray = (array) => {
@@ -54,9 +48,19 @@ function App() {
     const res = [];
     for (let i = 0; i < arr.length; i += chunkSize) {
       const chunk = arr.slice(i, i + chunkSize);
+      shuffleArray(chunk);
       res.push(chunk);
     }
     return res;
+  };
+
+  const createAnswer = (answer, id, isHeld, isCorrect) => {
+    return {
+      answer,
+      id,
+      isHeld,
+      isCorrect,
+    };
   };
 
   const defineAnswers = () => {
@@ -70,7 +74,6 @@ function App() {
       );
       return allAnswers;
     });
-    console.log(sliceArray(allAnswers, 4));
     setAnswers(sliceArray(allAnswers, 4));
   };
 
@@ -92,14 +95,18 @@ function App() {
   };
 
   const checkResults = () => {
-    setShowResult(true);
-    answers.map((answer) => {
-      return answer.forEach((item) => {
-        if (item.isHeld && item.isCorrect) {
-          setScore((prevScore) => prevScore + 1);
-        }
+    if (showResult === false) {
+      setShowResult(true);
+      answers.map((answer) => {
+        return answer.forEach((item) => {
+          if (item.isHeld && item.isCorrect) {
+            setScore((prevScore) => prevScore + 1);
+          }
+        });
       });
-    });
+    } else {
+      window.location.reload(false);
+    }
   };
 
   const questionElements = answers.map((answer, i) => {
@@ -117,13 +124,19 @@ function App() {
 
   return (
     <div className="container">
-      {showOverlay && <Intro toggleOverlay={toggleOverlay} />}
+      {showOverlay && (
+        <Intro
+          setApiData={setApiData}
+          apiData={apiData}
+          toggleOverlay={toggleOverlay}
+        />
+      )}
       {questionElements}
       <Result
         checkResults={checkResults}
         score={score}
         showResult={showResult}
-        questionAmount={questionAmount}
+        apiData={apiData}
       />
     </div>
   );

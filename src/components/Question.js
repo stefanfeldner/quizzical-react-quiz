@@ -3,21 +3,21 @@ import React from "react";
 
 function Question(props) {
   const answerElements = props.answer.map((answer) => {
-    let status = ''
+    let status = "";
     if (props.score > 0 || props.showResult) {
       if (answer.isHeld && answer.isCorrect) {
-        status = 'correct';
+        status = "correct";
       } else if (answer.isHeld && !answer.isCorrect) {
-        status = 'wrong'
+        status = "wrong";
       } else if (answer.isCorrect) {
-        status = 'correct'
+        status = "correct";
       } else if (answer.isHeld) {
-        status = 'active'
+        status = "active";
       } else {
-        status = ''
+        status = "";
       }
     } else {
-      if (answer.isHeld) status = 'active'
+      if (answer.isHeld) status = "active";
     }
     return (
       <div

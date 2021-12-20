@@ -11,7 +11,6 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 .container {
@@ -27,6 +26,7 @@ body {
   overflow: hidden;
   box-shadow: 0px 0px 5px rgb(211, 211, 211);
   padding: 40px 15px 25px;
+  margin: 50px 0;
 }
 
 .container::before, 
@@ -43,7 +43,7 @@ body {
   z-index: -1;
 }
 
-.container::after ,
+.container::after,
 .intro::after {
   content: '';
   width: 200px;
@@ -84,7 +84,24 @@ body {
   margin-bottom: 25px;
 }
 
+.intro--input {
+  margin-bottom: 10px;
+}
+.intro--input,
+.intro--select {
+  padding: 5px;
+  width: 200px;
+}
+
+.intro--label {
+  font-family: 'Karla';
+  font-weight: 700;
+  display: block;
+  margin-bottom: 5px;
+}
+
 .intro--button {
+  margin-top: 20px;
   background-color: #4D5B9E;
   border-radius: 15px;
   color: #fff;
