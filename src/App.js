@@ -30,11 +30,12 @@ function App() {
     fetchAPI();
   }, [apiData]);
 
+  // hideOverlay and define answers
   const toggleOverlay = () => {
     setShowOverlay((prevState) => !prevState);
     defineAnswers();
   };
-
+  
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -44,6 +45,7 @@ function App() {
     }
   };
 
+  // slice all answers in chunks of four
   const sliceArray = (arr, chunkSize) => {
     const res = [];
     for (let i = 0; i < arr.length; i += chunkSize) {
@@ -63,6 +65,7 @@ function App() {
     };
   };
 
+  // define all answers from the api data
   const defineAnswers = () => {
     const allAnswers = [];
     questions.map((question) => {
@@ -77,6 +80,7 @@ function App() {
     setAnswers(sliceArray(allAnswers, 4));
   };
 
+  // change status on click to active
   const handleClick = (id) => {
     setAnswers((prevState) =>
       prevState.map((answer) => {
@@ -94,6 +98,7 @@ function App() {
     );
   };
 
+  // check if correct answer is clicked and color mark it
   const checkResults = () => {
     if (showResult === false) {
       setShowResult(true);

@@ -1,4 +1,5 @@
 function Intro(props) {
+  // save form data to state
   const handleChange = (event) => {
     const target = event.target;
     const value = target.value;

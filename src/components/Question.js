@@ -2,6 +2,7 @@ import { decode } from "html-entities";
 import React from "react";
 
 function Question(props) {
+  // change class depending on current status
   const answerElements = props.answer.map((answer) => {
     let status = "";
     if (props.score > 0 || props.showResult) {
