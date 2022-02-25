@@ -17,7 +17,7 @@ Live URL: https://sf-quizzical-react-app.netlify.app/
   
 - HTML
   
-- [https://opentdb.com/](Oben Trivia DB)
+- https://opentdb.com
   
 
 ## Author
